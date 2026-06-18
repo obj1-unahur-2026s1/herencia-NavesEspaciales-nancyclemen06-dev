@@ -67,15 +67,17 @@ class Naves{
 }
 
 class NavesBaliza inherits Naves {
-  var property colorBaliza 
+  var colorBaliza = "rojo" 
+  const coloresQueTuvo = []
 
   method cambiarColorDeBaliza(colorNuevo) {
     colorBaliza = colorNuevo
+    coloresQueTuvo.add(colorBaliza)
   }
 
   override method prepararViaje(){
     super()
-    colorBaliza = "verde"
+    self.cambiarColorDeBaliza("verde")
     self.ponerseParaleloAlSol()
   }
 
@@ -92,13 +94,13 @@ class NavesBaliza inherits Naves {
   }
 
   override method tienePocaActividad(){
-    return super() && 
+    return super() && (coloresQueTuvo.size() == 1)
   }
 
 }
 
 class NavesPasajeros inherits Naves {
-  var property pasajeros
+  const pasajeros
   var racionComida = 0
   var racionBebida = 0
 
@@ -117,26 +119,8 @@ class NavesPasajeros inherits Naves {
   method descargarBebida(cantidad){
     racionBebida = (racionBebida - cantidad).max(0)
   }
-  
-  /*
-  method cargarComida(unaComida){
-    return racionComida.add(unaComida)
-  }
 
-  method descargarComida(unaComida){
-    return racionComida.remove(unaComida)
-  }
-
-  method cargarBebida(unaBebida){
-    return racionComida.add(unaBebida)
-  }
-
-  method descargarBebida(unaBebida){
-    return racionComida.remove(unaBebida)
-  }
-  */
-
-  override method prepaparViaje(){ //PREGUNTAR
+  override method prepararViaje(){
     super()
     self.cargarComida(4 * pasajeros)
     self.cargarBebida(6 * pasajeros)
@@ -144,12 +128,12 @@ class NavesPasajeros inherits Naves {
   }
 
   override method escapar(){
-    self.velocidad() * 2
+    velocidad = velocidad * 2
   }
 
   override method avisar(){
-    racionComida = (racionComida - 1) * pasajeros
-    racionBebida = (racionBebida - 2) * pasajeros
+    racionComida = (racionComida - 1).max(0) * pasajeros
+    racionBebida = (racionBebida - 2).max(0) * pasajeros
   }
 
   override method tienePocaActividad(){
@@ -208,7 +192,7 @@ class NaveCombate inherits Naves {
   }
 
   method emitioMensaje(unMensaje) {
-    return mensajesEmitidos.find({unMensaje})
+    return mensajesEmitidos.contains({unMensaje})
   }
 
   override method prepararViaje(){
@@ -235,8 +219,8 @@ class NaveCombate inherits Naves {
 class NaveHospital inherits NavesPasajeros {
   var quirofanoPreparado = true
 
-  method estaPreparado(){
-    return quirofanoPreparado
+  method prepararQuirofano(){
+    quirofanoPreparado = true
   }
 
   override method estaTranquila(){
@@ -245,7 +229,7 @@ class NaveHospital inherits NavesPasajeros {
 
   override method recibirAmenaza(){
     super()
-    quirofanoPreparado = true
+    self.prepararQuirofano()
   }
 }
 
